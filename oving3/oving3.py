@@ -258,21 +258,63 @@ def merge_sort(A, p, r):
 # ============================================================
 #                          Oppgave 11
 # ============================================================
+# def find_maximum(x):
+#     if len(x) == 1:
+#         return x[0]
+#     venstre = 0
+#     høyre = len(x) - 1
+
+#     while venstre < høyre:
+#         midt = (venstre + høyre) // 2
+
+#         if x[midt] < x[midt + 1]:
+#             # Vi er på den stigende siden
+#             venstre = midt + 1
+#         else:
+#             # Vi er på toppen eller den synkende siden
+#             høyre = midt
+
+#     return x[venstre]
+
+
+
 def find_maximum(x):
-    if len(x) == 1:
+    n = len(x)
+    if n == 1:
         return x[0]
-    venstre = 0
-    høyre = len(x) - 1
 
-    while venstre < høyre:
-        midt = (venstre + høyre) // 2
+    # Rotasjonen kan gjøre at selve toppen havner helt i kant
+    if x[0] > x[1] and x[0] > x[n - 1]:
+        return x[0]
+    if x[n - 1] > x[n - 2] and x[n - 1] > x[0]:
+        return x[n - 1]
 
-        if x[midt] < x[midt + 1]:
-            # Vi er på den stigende siden
-            venstre = midt + 1
-        else:
-            # Vi er på toppen eller den synkende siden
-            høyre = midt
+    venstre, høyre = 0, n - 1
+
+    if x[0] < x[1]:
+        # Mønster: stigende - synkende - (evt. stigende hale)
+        referanse = x[0]
+        while venstre < høyre:
+            midt = (venstre + høyre) // 2
+            if x[midt] < x[midt + 1]:
+                if x[midt] >= referanse:
+                    venstre = midt + 1   # ekte stigende del mot toppen
+                else:
+                    høyre = midt         # den "falske" halen
+            else:
+                høyre = midt             # synkende -> toppen er her eller til venstre
+    else:
+        # Mønster: synkende - stigende - (evt. synkende hale)
+        referanse = x[n - 1]
+        while venstre < høyre:
+            midt = (venstre + høyre) // 2
+            if x[midt] > x[midt + 1]:
+                if x[midt] >= referanse:
+                    høyre = midt         # ekte synkende del, kommer fra toppen
+                else:
+                    venstre = midt + 1   # den "falske" innledende delen
+            else:
+                venstre = midt + 1       # stigende -> toppen er til høyre
 
     return x[venstre]
 
